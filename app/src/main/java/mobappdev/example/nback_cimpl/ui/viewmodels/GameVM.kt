@@ -70,6 +70,19 @@ class GameVM(
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
 
+    private var _matchedEvents = HashSet<Int>() // HashSet to store matched events
+
+    private var matchedEventsRounds = HashSet<Pair<Int, Int>>() // Stores matched events and their rounds
+
+    private val _invalidValueChanges = mutableSetOf<Int>() // Track changes made by invalidValue
+
+    private val invalidValue = -999 // Define your invalid value here
+
+    private var currentRound = 0 // Variable to track the current round
+
+    private var lastEventValue: Int = -1
+
+
     override fun setGameType(gameType: GameType) {
         // update the gametype in the gamestate
         _gameState.value = _gameState.value.copy(gameType = gameType)
@@ -79,7 +92,7 @@ class GameVM(
         job?.cancel()  // Cancel any existing game loop
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
-        events = nBackHelper.generateNBackString(10, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        events = nBackHelper.generateNBackString(12, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         Log.d("GameVM", "The following sequence was generated: ${events.contentToString()}")
 
         job = viewModelScope.launch {
@@ -97,22 +110,58 @@ class GameVM(
          * Todo: This function should check if there is a match when the user presses a match button
          * Make sure the user can only register a match once for each event.
          */
+        val currentEvent = _gameState.value.eventValue
+
+        // Ensure there is a valid event value and there are enough previous events for comparison
+        if (currentEvent != -1 && events.size > nBack) {
+            // Check if the current event value is different from the last one
+            if (currentEvent != lastEventValue && currentEvent != invalidValue) {
+                lastEventValue = currentEvent
+                val nBackEvent = events[events.size - nBack - 1]
+                val currentRound = calculateCurrentRound() // Calculate the current round
+
+                // Check if the event was previously matched in a different round
+                val previouslyMatched = matchedEventsRounds.any { it.first == currentEvent && it.second != currentRound }
+
+                // Compare the current event with the one nBack positions ago and check if it wasn't previously matched
+                if (currentEvent == nBackEvent && !previouslyMatched) {
+                    _score.value += 1  // Increase the score
+                    matchedEventsRounds.add(Pair(currentEvent, currentRound)) // Add the event and its round to the matched set
+                    Log.d("GameVM", "Match Found!")
+                } else {
+                    Log.d("GameVM", "No Match Found or Already Matched")
+                    // No match or already matched
+                }
+            }
+        }
+
     }
     private fun runAudioGame() {
         // Todo: Make work for Basic grade
     }
 
     private suspend fun runVisualGame(events: Array<Int>){
+
         // Todo: Replace this code for actual game code
         for (value in events) {
+            currentRound++
             _gameState.value = _gameState.value.copy(eventValue = value)
             delay(eventInterval)
+
+            _invalidValueChanges.add(invalidValue)
+            _gameState.value = _gameState.value.copy(eventValue = invalidValue)
+            delay(1000L)
+
         }
 
     }
 
     private fun runAudioVisualGame(){
         // Todo: Make work for Higher grade
+    }
+
+    private fun calculateCurrentRound(): Int {
+        return currentRound // Return the current round value
     }
 
     companion object {

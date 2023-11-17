@@ -29,6 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.R
 import mobappdev.example.nback_cimpl.ui.viewmodels.FakeVM
@@ -47,9 +52,14 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
  *
  */
 
+
+
+
+
 @Composable
 fun HomeScreen(
-    vm: GameViewModel
+    vm: GameViewModel,
+    navController: NavController
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
@@ -120,16 +130,10 @@ fun HomeScreen(
                             .aspectRatio(3f / 2f)
                     )
                 }
-                Button(
-                    onClick = {
-                        // Todo: change this button behaviour
-                        scope.launch {
-                            snackBarHostState.showSnackbar(
-                                message = "Hey! you clicked the visual button",
-                                duration = SnackbarDuration.Short
-                            )
-                        }
-                    }) {
+                Button(onClick = {
+                    navController.navigate("VisualScreen")
+                }
+                    ) {
                     Icon(
                         painter = painterResource(id = R.drawable.visual),
                         contentDescription = "Visual",
@@ -142,7 +146,7 @@ fun HomeScreen(
         }
     }
 }
-
+/*
 @Preview
 @Composable
 fun HomeScreenPreview() {
@@ -150,4 +154,4 @@ fun HomeScreenPreview() {
     Surface(){
         HomeScreen(FakeVM())
     }
-}
+}*/

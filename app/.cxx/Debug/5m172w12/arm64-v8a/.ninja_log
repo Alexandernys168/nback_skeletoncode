@@ -1,0 +1,20 @@
+# ninja log v5
+0	452	7217498087700208	CMakeFiles/nback_cimpl.dir/nback.c.o	272a7bd2cc5ab363
+4	465	7217498087710245	CMakeFiles/JniBridge.dir/JniBridge.c.o	35703f625a4504
+453	548	7217498088673270	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libnback_cimpl.so	ce0ff76e9f5fd873
+548	634	7217498089528413	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libJniBridge.so	b7ba3fb1f29a9313
+1	10	0	clean	4026307abeb86062
+3	825	7218577056438558	CMakeFiles/nback_cimpl.dir/nback.c.o	272a7bd2cc5ab363
+8	837	7218577056458704	CMakeFiles/JniBridge.dir/JniBridge.c.o	35703f625a4504
+825	998	7218577058263685	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libnback_cimpl.so	ce0ff76e9f5fd873
+998	1093	7218577059216926	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libJniBridge.so	b7ba3fb1f29a9313
+0	13	0	clean	4026307abeb86062
+2	110	7218734834353775	CMakeFiles/nback_cimpl.dir/nback.c.o	272a7bd2cc5ab363
+23	123	7218734834363835	CMakeFiles/JniBridge.dir/JniBridge.c.o	35703f625a4504
+111	234	7218734835547791	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libnback_cimpl.so	ce0ff76e9f5fd873
+234	370	7218734836937601	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libJniBridge.so	b7ba3fb1f29a9313
+0	9	0	clean	4026307abeb86062
+3	181	7218735620797762	CMakeFiles/nback_cimpl.dir/nback.c.o	272a7bd2cc5ab363
+9	431	7218735621744943	CMakeFiles/JniBridge.dir/JniBridge.c.o	35703f625a4504
+182	692	7218735626144602	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libnback_cimpl.so	ce0ff76e9f5fd873
+692	815	7218735627398969	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/arm64-v8a/libJniBridge.so	b7ba3fb1f29a9313

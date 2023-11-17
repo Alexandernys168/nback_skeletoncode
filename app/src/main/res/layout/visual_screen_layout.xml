@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/blue"
+tools:context=".VisualScreenActivity">
+
+<Space
+    android:id="@+id/top_space"
+    android:layout_width="match_parent"
+    android:layout_height="96dp" />
+
+<!-- Grid layout for blue squares -->
+<GridLayout
+    android:id="@+id/blue_grid_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/green_layout"
+    android:layout_below="@id/top_space"
+    android:columnCount="3"
+    android:padding="32dp"
+    android:rowCount="3">
+
+    <!-- Loop to create 9 blue square items -->
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_rowWeight="1"
+        android:layout_columnWeight="1"
+        android:layout_margin="4dp"
+        android:background="@color/gray_blue" />
+</GridLayout>
+
+
+<LinearLayout
+    android:id="@+id/green_layout"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_alignParentBottom="true"
+    android:background="@color/green"
+    android:gravity="center">
+
+    <!-- Text to display "POSITION" -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/position_text"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+</LinearLayout>
+
+</RelativeLayout>
