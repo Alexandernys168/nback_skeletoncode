@@ -70,6 +70,10 @@ class GameVM(
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
 
+    private var _givenPointThisRound: Int = 0;
+
+
+
     private var _passedEvents = mutableListOf<Int>() // mutableListOf to store passed events
 
     private var matchedEventsRounds =
@@ -81,7 +85,7 @@ class GameVM(
 
     private var currentRound = 0 // Variable to track the current round
 
-    private var lastEventValue: Int = -1
+    private var _currentEventValue: Int = -1
 
 
     override fun setGameType(gameType: GameType) {
@@ -113,54 +117,25 @@ class GameVM(
          * Make sure the user can only register a match once for each event.
          */
         val currentEvent = _gameState.value.eventValue
+        Log.d(
+            "GameVM",
+            "currentEvent: $_currentEventValue, PassedEvent: ${_passedEvents.firstOrNull()}"
+        )
+        if(_passedEvents.isNotEmpty()){
+            if (_currentEventValue != -1 && _currentEventValue != invalidValue && _currentEventValue == _passedEvents[0] && currentRound>1 && _givenPointThisRound!= currentRound) {
+                // Check if the current event value is different from the last one
 
-        // Ensure there is a valid event value and there are enough previous events for comparison
-        if (currentEvent != -1 && events.size > nBack) {
-            // Check if the current event value is different from the last one
-            if (currentEvent != lastEventValue && currentEvent != invalidValue) {
+                _score.value += 1
+                Log.d("GameVM", "Match Found!")
+                _givenPointThisRound = currentRound
 
-                val nBackEvent = events[events.size - nBack - 2]
-                val currentRound = calculateCurrentRound() // Calculate the current round
-                Log.d(
-                    "GameVM",
-                    "currentEvent: $currentEvent, lastEventValue: $lastEventValue, nBackEvent: $nBackEvent"
-                )
-                val previouslyMatched =
-                    matchedEventsRounds.any { it.first == currentEvent && it.second != currentRound }
-
-                if (lastEventValue == currentEvent && !previouslyMatched) {
-                    _score.value += 1
-                    matchedEventsRounds.add(
-                        Pair(
-                            currentEvent,
-                            currentRound
-                        )
-                    ) // Add the event and its round to the matched set
-                    Log.d("GameVM", "Match Found!")
-                } else {
-                    Log.d("GameVM", "No Match Found or Already Matched")
-                    // No match or already matched
-                }
-
-
-
-
-                // Check if the event was previously matched in a different round
-
-                /*
-                                // Compare the current event with the one nBack positions ago and check if it wasn't previously matched
-                                if (!previouslyMatched) {
-                                    _score.value += 1  // Increase the score
-                                    matchedEventsRounds.add(Pair(currentEvent, currentRound)) // Add the event and its round to the matched set
-                                    Log.d("GameVM", "Match Found!")
-                                } else {
-                                    Log.d("GameVM", "No Match Found or Already Matched")
-                                    // No match or already matched
-                                }
-
-                 */
+            } else {
+                Log.d("GameVM", "No Match Found or Already Matched")
+                // No match or already matched
             }
         }
+        // Ensure there is a valid event value and there are enough previous events for comparison
+
 
     }
 
@@ -173,14 +148,22 @@ class GameVM(
         // Todo: Replace this code for actual game code
         for (value in events) {
             currentRound++
+            if(currentRound >2){
+                _passedEvents.removeAt(0)
+            }
 
             _gameState.value = _gameState.value.copy(eventValue = value)
 
+            _currentEventValue= _gameState.value.copy(eventValue = value).eventValue
+
+            _passedEvents.add(_gameState.value.copy(eventValue = value).eventValue)
+
+
             delay(eventInterval)
 
-            _invalidValueChanges.add(invalidValue)
             _gameState.value = _gameState.value.copy(eventValue = invalidValue)
             delay(1000L)
+
 
         }
 

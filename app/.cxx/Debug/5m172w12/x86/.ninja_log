@@ -1,20 +1,5 @@
 # ninja log v5
-5	128	7217498109795840	CMakeFiles/JniBridge.dir/JniBridge.c.o	5068e94d9417ec95
-1	135	7217498109805824	CMakeFiles/nback_cimpl.dir/nback.c.o	3feb37788e6c322c
-135	250	7217498111121065	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libnback_cimpl.so	eae486be9c0c5e3a
-251	359	7217498112201216	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libJniBridge.so	86fbd9cfbfe15ea8
-0	14	0	clean	4026307abeb86062
-8	294	7218577078484840	CMakeFiles/JniBridge.dir/JniBridge.c.o	5068e94d9417ec95
-2	305	7218577078474748	CMakeFiles/nback_cimpl.dir/nback.c.o	3feb37788e6c322c
-305	1576	7218577091624277	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libnback_cimpl.so	eae486be9c0c5e3a
-1576	1711	7218577093024198	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libJniBridge.so	86fbd9cfbfe15ea8
-1	11	0	clean	4026307abeb86062
-2	153	7218734850399071	CMakeFiles/nback_cimpl.dir/nback.c.o	3feb37788e6c322c
-8	174	7218734850765267	CMakeFiles/JniBridge.dir/JniBridge.c.o	5068e94d9417ec95
-154	651	7218734855366931	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libnback_cimpl.so	eae486be9c0c5e3a
-651	807	7218734857147249	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libJniBridge.so	86fbd9cfbfe15ea8
-0	9	0	clean	4026307abeb86062
-3	124	7218735636953767	CMakeFiles/nback_cimpl.dir/nback.c.o	3feb37788e6c322c
-7	188	7218735637404674	CMakeFiles/JniBridge.dir/JniBridge.c.o	5068e94d9417ec95
-127	287	7218735638830624	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libnback_cimpl.so	eae486be9c0c5e3a
-288	511	7218735640838658	C:/Users/alexa/Programmering/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libJniBridge.so	86fbd9cfbfe15ea8
+1	133	7220231149102322	CMakeFiles/nback_cimpl.dir/nback.c.o	26e0f4ee54336a90
+7	147	7220231149112339	CMakeFiles/JniBridge.dir/JniBridge.c.o	52bf445917c54c02
+134	242	7220231150231044	C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libnback_cimpl.so	d449006a9e2fdc4
+243	339	7220231151226415	C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/build/intermediates/cxx/Debug/5m172w12/obj/x86/libJniBridge.so	792c97de062cd89
