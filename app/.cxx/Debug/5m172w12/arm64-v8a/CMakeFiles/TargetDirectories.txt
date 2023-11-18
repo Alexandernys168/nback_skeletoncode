@@ -1,4 +1,4 @@
-C:/Users/alexa/Programmering/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/nback_cimpl.dir
-C:/Users/alexa/Programmering/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/JniBridge.dir
-C:/Users/alexa/Programmering/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/edit_cache.dir
-C:/Users/alexa/Programmering/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/nback_cimpl.dir
+C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/JniBridge.dir
+C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/alexa/Documents/GitHub/nback_skeletoncode/app/.cxx/Debug/5m172w12/arm64-v8a/CMakeFiles/rebuild_cache.dir

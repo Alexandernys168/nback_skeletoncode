@@ -48,7 +48,7 @@ interface GameViewModel {
 
 class GameVM(
     private val userPreferencesRepository: UserPreferencesRepository
-): GameViewModel, ViewModel() {
+) : GameViewModel, ViewModel() {
     private val _gameState = MutableStateFlow(GameState())
     override val gameState: StateFlow<GameState>
         get() = _gameState.asStateFlow()
@@ -70,9 +70,14 @@ class GameVM(
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
 
-    private var _matchedEvents = HashSet<Int>() // HashSet to store matched events
+    private var _givenPointThisRound: Int = 0;
 
-    private var matchedEventsRounds = HashSet<Pair<Int, Int>>() // Stores matched events and their rounds
+
+
+    private var _passedEvents = mutableListOf<Int>() // mutableListOf to store passed events
+
+    private var matchedEventsRounds =
+        HashSet<Pair<Int, Int>>() // Stores matched events and their rounds
 
     private val _invalidValueChanges = mutableSetOf<Int>() // Track changes made by invalidValue
 
@@ -80,7 +85,7 @@ class GameVM(
 
     private var currentRound = 0 // Variable to track the current round
 
-    private var lastEventValue: Int = -1
+    private var _currentEventValue: Int = -1
 
 
     override fun setGameType(gameType: GameType) {
@@ -92,7 +97,8 @@ class GameVM(
         job?.cancel()  // Cancel any existing game loop
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
-        events = nBackHelper.generateNBackString(12, 9, 30, nBack).toList().toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
+        events = nBackHelper.generateNBackString(10, 9, 30, nBack).toList()
+            .toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         Log.d("GameVM", "The following sequence was generated: ${events.contentToString()}")
 
         job = viewModelScope.launch {
@@ -111,52 +117,59 @@ class GameVM(
          * Make sure the user can only register a match once for each event.
          */
         val currentEvent = _gameState.value.eventValue
+        Log.d(
+            "GameVM",
+            "currentEvent: $_currentEventValue, PassedEvent: ${_passedEvents.firstOrNull()}"
+        )
+        if(_passedEvents.isNotEmpty()){
+            if (_currentEventValue != -1 && _currentEventValue != invalidValue && _currentEventValue == _passedEvents[0] && currentRound>1 && _givenPointThisRound!= currentRound) {
+                // Check if the current event value is different from the last one
 
-        // Ensure there is a valid event value and there are enough previous events for comparison
-        if (currentEvent != -1 && events.size > nBack) {
-            // Check if the current event value is different from the last one
-            if (currentEvent != lastEventValue && currentEvent != invalidValue) {
-                lastEventValue = currentEvent
-                val nBackEvent = events[events.size - nBack - 1]
-                val currentRound = calculateCurrentRound() // Calculate the current round
+                _score.value += 1
+                Log.d("GameVM", "Match Found!")
+                _givenPointThisRound = currentRound
 
-                // Check if the event was previously matched in a different round
-                val previouslyMatched = matchedEventsRounds.any { it.first == currentEvent && it.second != currentRound }
-
-                // Compare the current event with the one nBack positions ago and check if it wasn't previously matched
-                if (currentEvent == nBackEvent && !previouslyMatched) {
-                    _score.value += 1  // Increase the score
-                    matchedEventsRounds.add(Pair(currentEvent, currentRound)) // Add the event and its round to the matched set
-                    Log.d("GameVM", "Match Found!")
-                } else {
-                    Log.d("GameVM", "No Match Found or Already Matched")
-                    // No match or already matched
-                }
+            } else {
+                Log.d("GameVM", "No Match Found or Already Matched")
+                // No match or already matched
             }
         }
+        // Ensure there is a valid event value and there are enough previous events for comparison
+
 
     }
+
     private fun runAudioGame() {
         // Todo: Make work for Basic grade
     }
 
-    private suspend fun runVisualGame(events: Array<Int>){
+    private suspend fun runVisualGame(events: Array<Int>) {
 
         // Todo: Replace this code for actual game code
         for (value in events) {
             currentRound++
+            if(currentRound >2){
+                _passedEvents.removeAt(0)
+            }
+
             _gameState.value = _gameState.value.copy(eventValue = value)
+
+            _currentEventValue= _gameState.value.copy(eventValue = value).eventValue
+
+            _passedEvents.add(_gameState.value.copy(eventValue = value).eventValue)
+
+
             delay(eventInterval)
 
-            _invalidValueChanges.add(invalidValue)
             _gameState.value = _gameState.value.copy(eventValue = invalidValue)
             delay(1000L)
+
 
         }
 
     }
 
-    private fun runAudioVisualGame(){
+    private fun runAudioVisualGame() {
         // Todo: Make work for Higher grade
     }
 
@@ -184,7 +197,7 @@ class GameVM(
 }
 
 // Class with the different game types
-enum class GameType{
+enum class GameType {
     Audio,
     Visual,
     AudioVisual
@@ -196,7 +209,7 @@ data class GameState(
     val eventValue: Int = -1  // The value of the array string
 )
 
-class FakeVM: GameViewModel{
+class FakeVM : GameViewModel {
     override val gameState: StateFlow<GameState>
         get() = MutableStateFlow(GameState()).asStateFlow()
     override val score: StateFlow<Int>
