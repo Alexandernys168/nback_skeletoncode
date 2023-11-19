@@ -108,6 +108,7 @@ class GameVM(
                 GameType.Visual -> runVisualGame(events)
             }
             // Todo: update the highscore
+            _highscore.value = _score.value;
         }
     }
 
