@@ -1,12 +1,11 @@
 package mobappdev.example.nback_cimpl.ui.screens
 
-import android.os.Bundle
 import android.util.Log
-import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,41 +21,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import mobappdev.example.nback_cimpl.ui.viewmodels.GameVM
-import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
-import androidx.compose.ui.res.colorResource
+import mobappdev.example.nback_cimpl.R
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameType
-
-/*
-class VisualScreen : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            // Instantiate the viewmodel
-            val gameViewModel: GameVM = viewModel(
-                factory = GameVM.Factory
-            )
-
-        }
-    }
-
-
-}
-*/
+import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
 @Composable
-fun VisualScreen(
+fun AudioScreen(
     vm: GameViewModel,
     navController: NavController
 ) {
@@ -64,10 +41,10 @@ fun VisualScreen(
 
 
     LaunchedEffect(vm) {
-        vm.setGameType(GameType.Visual)
+        vm.setGameType(GameType.Audio)
         vm.startGame()
-    }
 
+    }
 
 
     val gameState by vm.gameState.collectAsState()  // Collect the game state
@@ -81,12 +58,19 @@ fun VisualScreen(
         }
     }
 
+    val speakerImage = if (gameState.eventValue > 0) {
+        painterResource(id = R.drawable.sound_on) // Replace with your speaker image resource
+    } else {
+        null // No speaker image
+    }
+
+
     val blueColor = Color(0xFF86B9EE)
     val gray_blueColor = Color(0xffbed8f1)
     val greenColor = Color(0xff7dd69e)
 
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(blueColor)
@@ -107,42 +91,31 @@ fun VisualScreen(
             color = Color.White,
             style = MaterialTheme.typography.bodySmall
         )
-        // Grid layout for blue squares
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(32.dp)
-        ) {
-            items(3) { row ->
-                Row(Modifier.fillMaxWidth()) {
-                    repeat(3) { col ->
+        // Big Picture of speaker
 
-                        val index = row * 3 + col
-                        val isLit =
-                            gameState.eventValue == index  // Check if the square should be lit
-
-                        Spacer(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .weight(1f)
-                                .padding(4.dp)
-                                .background(if (isLit) Color.Yellow else gray_blueColor)
-                        )
-                    }
-                }
-            }
+        speakerImage?.let { image ->
+            Image(
+                painter = image,
+                contentDescription = "Speaker Image",
+                modifier = Modifier
+                    .size(200.dp) // Adjust the size as needed
+                    .align(Alignment.Center)
+                    .padding(16.dp)
+            )
         }
+
         // Linear layout at the bottom with green background and text
         Row(
             modifier = Modifier
                 .height(100.dp)
                 .fillMaxWidth()
-                .background(greenColor),
+                .background(greenColor)
+                .align(Alignment.BottomCenter),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "POSITION",
+                text = "AUDIO",
                 color = Color.White,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier

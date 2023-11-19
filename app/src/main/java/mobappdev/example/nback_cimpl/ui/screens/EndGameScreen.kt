@@ -16,20 +16,15 @@ import androidx.navigation.NavController
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
 
-@Preview
-@Composable
-fun EndGameScreenPreview() {
-    // Provide default parameters or values for your preview
-    val vm = GameViewModel
-    val navController = NavController
 
-    EndGameScreen(vm, navController)
-}
 
 @Composable
 fun EndGameScreen(
+
     vm: GameViewModel,
     navController: NavController
+
+
 ) {
     val highScore by vm.highscore.collectAsState()
 
@@ -43,24 +38,30 @@ fun EndGameScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(blueColor)
+            .padding(top = 100.dp)
             .padding(16.dp)
+
     ) {
+        Text(text = "Game Completed", color = darkBlueColor,  modifier = Modifier.align(Alignment.CenterHorizontally).padding(bottom = 16.dp))
         // Dark blue square displaying total score and information
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(400.dp)
                 .background(darkBlueColor)
+
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+
             ) {
                 Text(text = "Total Score: $highScore", color = textColor)
                 Spacer(modifier = Modifier.height(16.dp))
-                InfoRectangle(title = "N", value = "x", color = greenColor)
+                InfoRectangle(title = "N = ", value = "x", color = greenColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 InfoRectangle(title = "Playtime", value = "x", color = greenColor)
                 Spacer(modifier = Modifier.height(8.dp))
@@ -73,10 +74,10 @@ fun EndGameScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(onClick = { /* TODO: Handle Play again */ }) {
+            Button(onClick = { navController.navigate("VisualScreen") }) {
                 Text(text = "Play again")
             }
-            Button(onClick = { /* TODO: Handle Return Home */ }) {
+            Button(onClick = { navController.navigate("HomeScreen") }) {
                 Text(text = "Return Home")
             }
         }
