@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +37,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import mobappdev.example.nback_cimpl.R
-import mobappdev.example.nback_cimpl.ui.viewmodels.FakeVM
+//import mobappdev.example.nback_cimpl.ui.viewmodels.FakeVM
+import mobappdev.example.nback_cimpl.ui.viewmodels.GameType
 import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
 
 /**
@@ -53,9 +55,6 @@ import mobappdev.example.nback_cimpl.ui.viewmodels.GameViewModel
  */
 
 
-
-
-
 @Composable
 fun HomeScreen(
     vm: GameViewModel,
@@ -63,6 +62,13 @@ fun HomeScreen(
 ) {
     val highscore by vm.highscore.collectAsState()  // Highscore is its own StateFlow
     val gameState by vm.gameState.collectAsState()
+
+    val currentGameType = gameState.gameType // Assuming it returns a String representation
+    val nBackValue = vm.nBack // Assuming it returns an Int
+    val timeBetweenEvents = vm.totalTimeBetweenIntervals // Assuming it returns a String
+    val numberOfEventsInRound = vm.numberOfEvents // Assuming it returns an Int
+
+
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -81,32 +87,16 @@ fun HomeScreen(
                 text = "High-Score = $highscore",
                 style = MaterialTheme.typography.headlineLarge
             )
-            // Todo: You'll probably want to change this "BOX" part of the composable
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (gameState.eventValue != -1) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = "Current eventValue is: ${gameState.eventValue}",
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Button(onClick = vm::startGame) {
-                        Text(text = "Generate eventValues")
-                    }
-                }
-            }
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "Start Game".uppercase(),
-                style = MaterialTheme.typography.displaySmall
-            )
+
+            Text("Current Game Type: $currentGameType")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("N-Back Value: $nBackValue")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Time Between Events: $timeBetweenEvents ms")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Number of Events in a Round: $numberOfEventsInRound")
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,12 +105,9 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-                    // Todo: change this button behaviour
-                    scope.launch {
-                        snackBarHostState.showSnackbar(
-                            message = "Hey! you clicked the audio button"
-                        )
-                    }
+
+                    navController.navigate("AudioScreen")
+
                 }) {
                     Icon(
                         painter = painterResource(id = R.drawable.sound_on),
@@ -131,9 +118,11 @@ fun HomeScreen(
                     )
                 }
                 Button(onClick = {
+
                     navController.navigate("VisualScreen")
+
                 }
-                    ) {
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.visual),
                         contentDescription = "Visual",

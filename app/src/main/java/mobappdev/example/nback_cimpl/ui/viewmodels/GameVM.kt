@@ -1,5 +1,6 @@
 package mobappdev.example.nback_cimpl.ui.viewmodels
 
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,13 +8,16 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import mobappdev.example.nback_cimpl.GameApplication
+import mobappdev.example.nback_cimpl.MainActivity
 import mobappdev.example.nback_cimpl.NBackHelper
 import mobappdev.example.nback_cimpl.data.UserPreferencesRepository
 
@@ -39,6 +43,12 @@ interface GameViewModel {
     val score: StateFlow<Int>
     val highscore: StateFlow<Int>
     val nBack: Int
+    val numberOfEvents: Int
+    val totalTimeBetweenIntervals: Long
+    val wrongAnswer: Int
+
+    fun clearWrongAnswer()
+    fun getCurrentRound(): Int
 
     fun setGameType(gameType: GameType)
     fun startGame()
@@ -66,11 +76,20 @@ class GameVM(
 
     private var job: Job? = null  // coroutine job for the game event
     private val eventInterval: Long = 2000L  // 2000 ms (2s)
+    private val hiddenEventInterval: Long = 1000L // 1000 ms (1s)
+    override val totalTimeBetweenIntervals: Long = eventInterval + hiddenEventInterval
+    override val numberOfEvents: Int = 10
 
     private val nBackHelper = NBackHelper()  // Helper that generate the event array
     private var events = emptyArray<Int>()  // Array with all events
 
     private var _givenPointThisRound: Int = 0;
+
+    override var wrongAnswer: Int =0
+
+    override fun clearWrongAnswer() {
+        wrongAnswer =0
+    }
 
 
 
@@ -82,33 +101,80 @@ class GameVM(
     private val _invalidValueChanges = mutableSetOf<Int>() // Track changes made by invalidValue
 
     private val invalidValue = -999 // Define your invalid value here
+    private val gameHasEnded = -555 // Sets the aeventValue which indicates that the game is finished
 
     private var currentRound = 0 // Variable to track the current round
 
     private var _currentEventValue: Int = -1
 
+    private lateinit var textToSpeech: TextToSpeech
+
+    fun setTextToSpeech(textToSpeech: TextToSpeech) {
+        this.textToSpeech = textToSpeech
+    }
+
+    private val valueToLetterMap = mapOf(
+        1 to "A",
+        2 to "B",
+        3 to "C",
+        4 to "D",
+        5 to "E",
+        6 to "F",
+        7 to "G",
+        8 to "H",
+        9 to "I"
+    )
+
+    private val letterToValueMap = mapOf(
+        "A" to 1,
+        "B" to 2,
+        "C" to 3,
+        "D" to 4,
+        "E" to 5,
+        "F" to 6,
+        "G" to 7,
+        "H" to 8,
+        "I" to 9
+    )
+
+
+    private val eventsToSpeak = mutableListOf<String>()
+
+
+
+
 
     override fun setGameType(gameType: GameType) {
         // update the gametype in the gamestate
         _gameState.value = _gameState.value.copy(gameType = gameType)
+
     }
 
     override fun startGame() {
         job?.cancel()  // Cancel any existing game loop
+        _gameState.value = _gameState.value.copy(eventValue = 0)
+        currentRound=0
+        _score.value=0
 
         // Get the events from our C-model (returns IntArray, so we need to convert to Array<Int>)
-        events = nBackHelper.generateNBackString(10, 9, 30, nBack).toList()
+        events = nBackHelper.generateNBackString(numberOfEvents, 9, 30, nBack).toList()
             .toTypedArray()  // Todo Higher Grade: currently the size etc. are hardcoded, make these based on user input
         Log.d("GameVM", "The following sequence was generated: ${events.contentToString()}")
 
         job = viewModelScope.launch {
             when (gameState.value.gameType) {
-                GameType.Audio -> runAudioGame()
+                GameType.Audio -> runAudioGame(events)
                 GameType.AudioVisual -> runAudioVisualGame()
                 GameType.Visual -> runVisualGame(events)
             }
-            // Todo: update the highscore
+
+            //_highscore.value = _score.value;
+            if( _score.value > _highscore.value){
+                saveHighScore(_score.value)
+            }
+
         }
+
     }
 
     override fun checkMatch() {
@@ -131,22 +197,72 @@ class GameVM(
 
             } else {
                 Log.d("GameVM", "No Match Found or Already Matched")
+                wrongAnswer++
                 // No match or already matched
             }
         }
-        // Ensure there is a valid event value and there are enough previous events for comparison
+
+
 
 
     }
 
-    private fun runAudioGame() {
+    private suspend fun runAudioGame(events: Array<Int>) {
         // Todo: Make work for Basic grade
+        Log.d("GameVM", "EventValue: ${_gameState.value.eventValue}")
+
+        for (value in events) {
+
+            currentRound++
+            if (currentRound > 2) {
+                _passedEvents.removeAt(0)
+            }
+            val letter = valueToLetterMap[value]
+
+            textToSpeech.speak(letter, TextToSpeech.QUEUE_ADD, null, null)
+            Log.d("GameVM", "The letter $letter should have been heard.")
+            // Get the numeric value corresponding to the letter
+
+            val numericValue =
+                letterToValueMap[letter] // Assuming you have a map for letters to numeric values
+
+
+            // Set the game state's eventValue with the numeric value of the letter
+            if (numericValue != null) {
+                _gameState.value = _gameState.value.copy(eventValue = numericValue)
+
+                _currentEventValue = _gameState.value.copy(eventValue = numericValue).eventValue
+
+                _passedEvents.add(_gameState.value.copy(eventValue = numericValue).eventValue)
+            }
+            delay(eventInterval)
+            _gameState.value = _gameState.value.copy(eventValue = invalidValue)
+            delay(hiddenEventInterval)
+
+            val isLastEvent = numericValue == events.last()
+            if (isLastEvent) {
+                _gameState.value = _gameState.value.copy(eventValue = gameHasEnded)
+
+            }
+
+
+
+
+        }
+        _currentEventValue = -1
+        _passedEvents.clear()
+
+        Log.d("GameVM", "EventValue: ${_gameState.value.eventValue}")
+
+
     }
 
     private suspend fun runVisualGame(events: Array<Int>) {
 
-        // Todo: Replace this code for actual game code
+
+
         for (value in events) {
+
             currentRound++
             if(currentRound >2){
                 _passedEvents.removeAt(0)
@@ -162,10 +278,17 @@ class GameVM(
             delay(eventInterval)
 
             _gameState.value = _gameState.value.copy(eventValue = invalidValue)
-            delay(1000L)
+            delay(hiddenEventInterval)
 
+            val isLastEvent = value == events.last()
+            if(isLastEvent){
+                _gameState.value = _gameState.value.copy(eventValue = gameHasEnded)
+            }
 
         }
+        Log.d("GameVM", "EventValue: ${_gameState.value.eventValue}")
+        _currentEventValue = -1
+        _passedEvents.clear()
 
     }
 
@@ -173,9 +296,17 @@ class GameVM(
         // Todo: Make work for Higher grade
     }
 
-    private fun calculateCurrentRound(): Int {
+    override fun getCurrentRound(): Int {
         return currentRound // Return the current round value
     }
+
+
+     fun saveHighScore(score: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveHighScore(score)
+        }
+    }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -208,7 +339,7 @@ data class GameState(
     val gameType: GameType = GameType.Visual,  // Type of the game
     val eventValue: Int = -1  // The value of the array string
 )
-
+/*
 class FakeVM : GameViewModel {
     override val gameState: StateFlow<GameState>
         get() = MutableStateFlow(GameState()).asStateFlow()
@@ -219,6 +350,16 @@ class FakeVM : GameViewModel {
     override val nBack: Int
         get() = 2
 
+    override val numberOfEvents: Int
+        get() = 10
+
+    override val totalTimeBetweenIntervals: Long
+        get() = 3000L
+
+    override fun getCurrentRound(): Int {
+        TODO("Not yet implemented")
+    }
+
     override fun setGameType(gameType: GameType) {
     }
 
@@ -228,3 +369,5 @@ class FakeVM : GameViewModel {
     override fun checkMatch() {
     }
 }
+
+ */
