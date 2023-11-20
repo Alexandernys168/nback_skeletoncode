@@ -45,7 +45,9 @@ interface GameViewModel {
     val nBack: Int
     val numberOfEvents: Int
     val totalTimeBetweenIntervals: Long
+    val wrongAnswer: Int
 
+    fun clearWrongAnswer()
     fun getCurrentRound(): Int
 
     fun setGameType(gameType: GameType)
@@ -82,6 +84,12 @@ class GameVM(
     private var events = emptyArray<Int>()  // Array with all events
 
     private var _givenPointThisRound: Int = 0;
+
+    override var wrongAnswer: Int =0
+
+    override fun clearWrongAnswer() {
+        wrongAnswer =0
+    }
 
 
 
@@ -161,7 +169,10 @@ class GameVM(
             }
 
             //_highscore.value = _score.value;
-            saveHighScore(_score.value)
+            if( _score.value > _highscore.value){
+                saveHighScore(_score.value)
+            }
+
         }
 
     }
@@ -186,10 +197,12 @@ class GameVM(
 
             } else {
                 Log.d("GameVM", "No Match Found or Already Matched")
+                wrongAnswer++
                 // No match or already matched
             }
         }
-        // Ensure there is a valid event value and there are enough previous events for comparison
+
+
 
 
     }
@@ -199,6 +212,7 @@ class GameVM(
         Log.d("GameVM", "EventValue: ${_gameState.value.eventValue}")
 
         for (value in events) {
+
             currentRound++
             if (currentRound > 2) {
                 _passedEvents.removeAt(0)
@@ -248,6 +262,7 @@ class GameVM(
 
 
         for (value in events) {
+
             currentRound++
             if(currentRound >2){
                 _passedEvents.removeAt(0)

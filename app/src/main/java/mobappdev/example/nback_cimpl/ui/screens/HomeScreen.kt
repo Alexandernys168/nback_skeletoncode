@@ -96,11 +96,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Text("Number of Events in a Round: $numberOfEventsInRound")
 
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "Start Game".uppercase(),
-                style = MaterialTheme.typography.displaySmall
-            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

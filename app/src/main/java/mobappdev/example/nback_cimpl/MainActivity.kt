@@ -1,15 +1,20 @@
 package mobappdev.example.nback_cimpl
 
 import EndGameScreen
+import android.content.res.Configuration
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -69,6 +74,22 @@ class MainActivity : ComponentActivity() {
 
                     val navController = rememberNavController()
                    
+                    val configuration = LocalConfiguration.current
+
+                    LaunchedEffect(configuration) {
+                        snapshotFlow { configuration.orientation }
+                            .collect { orientation ->
+                                when (orientation) {
+                                    Configuration.ORIENTATION_LANDSCAPE -> {
+                                        Log.d("GameVM","This is Landscape")
+                                    }
+                                    else -> {
+                                        Log.d("GameVM","This is Portrait")
+                                    }
+                                }
+                            }
+                    }
+
 
 
                     NavHost(navController = navController, startDestination = "HomeScreen") {

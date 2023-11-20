@@ -1,0 +1,1 @@
+C:\Users\alexa\Programmering\nback_skeletoncode\app\src\main\cpp\CMakeLists.txt
